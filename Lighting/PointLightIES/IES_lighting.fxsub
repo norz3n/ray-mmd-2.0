@@ -2,65 +2,77 @@
 #include "../../../ray_advanced.conf"
 #include "../../../shader/math.fxsub"
 #include "../../../shader/common.fxsub"
-#include "../../../shader/Color.fxsub"
-#include "../../../shader/Packing.fxsub"
 #include "../../../shader/gbuffer.fxsub"
 #include "../../../shader/gbuffer_sampler.fxsub"
 #include "../../../shader/BRDF.fxsub"
 #include "../../../shader/arealight.fxsub"
 
 #if SHADOW_MAP_FROM > 0
-#	include "../../../shader/Poisson.fxsub"
-#	include "../../../shader/Shadow.fxsub"
+#	include "../../../shader/shadowcommon.fxsub"
 #endif
 
 float3 mPosition : CONTROLOBJECT<string name = "(self)"; string item = "Position";>;
 float3 mDirection : CONTROLOBJECT<string name = "(self)"; string item = "Direction";>;
 
-float mHP : CONTROLOBJECT<string name = "(self)"; string item = "H+";>;
-float mSP : CONTROLOBJECT<string name = "(self)"; string item = "S+";>;
-float mVP : CONTROLOBJECT<string name = "(self)"; string item = "V+";>;
-float mVM : CONTROLOBJECT<string name = "(self)"; string item = "V-";>;
-float mTemperatureP : CONTROLOBJECT<string name = "(self)"; string item = "Temperature+";>;
-float mTemperatureM : CONTROLOBJECT<string name = "(self)"; string item = "Temperature-";>;
+float mR : CONTROLOBJECT<string name = "(self)"; string item = "R+";>;
+float mG : CONTROLOBJECT<string name = "(self)"; string item = "G+";>;
+float mB : CONTROLOBJECT<string name = "(self)"; string item = "B+";>;
 float mBlink : CONTROLOBJECT<string name = "(self)"; string item = "Blink";>;
 float mRangeP : CONTROLOBJECT<string name = "(self)"; string item = "Range+";>;
 float mRangeM : CONTROLOBJECT<string name = "(self)"; string item = "Range-";>;
-float mRadiusP : CONTROLOBJECT<string name = "(self)"; string item = "Radius+";>;
-float mRadiusM : CONTROLOBJECT<string name = "(self)"; string item = "Radius-";>;
+float mHardnessP : CONTROLOBJECT<string name = "(self)"; string item = "Hardness";>;
+float mIntensityP : CONTROLOBJECT<string name = "(self)"; string item = "Intensity+";>;
+float mIntensityM : CONTROLOBJECT<string name = "(self)"; string item = "Intensity-";>;
 float mAttenuationBulbP : CONTROLOBJECT<string name = "(self)"; string item = "AttenuationBulb+";>;
 float mAttenuationBulbM : CONTROLOBJECT<string name = "(self)"; string item = "AttenuationBulb-";>;
 float mMultiLightP : CONTROLOBJECT<string name = "ray_controller.pmx"; string item = "MultiLight+";>;
 float mMultiLightM : CONTROLOBJECT<string name = "ray_controller.pmx"; string item = "MultiLight-";>;
 
-static const float LightBlink = saturate(1 - SmoothTriangleWave(time * mBlink * 10));
+static const float LightHardness = lerp(shadowHardness.x, shadowHardness.y, mHardnessP);
 static const float LightRange = lerp(lerp(lightRangeParams.x, lightRangeParams.z, mRangeP), lightRangeParams.y, mRangeM);
-static const float LightRadius = lerp(lerp(lightRadiusLimits.x, lightRadiusLimits.z, mRadiusP), lightRadiusLimits.y, mRadiusM);
+static const float LightBlink = saturate(1 - SmoothTriangleWave(time * mBlink * 10));
 static const float LightAttenuationBulb = lerp(lerp(lightAttenuationBulbParams.x, lightAttenuationBulbParams.z, mAttenuationBulbP), lightAttenuationBulbParams.y, mAttenuationBulbM);
-static const float LightIntensity = lerp(lerp(lightIntensityParams.x, lightIntensityParams.z, mVP), lightIntensityParams.y, mVM);
+static const float LightIntensity = lerp(lerp(lightIntensityParams.x, lightIntensityParams.z, mIntensityP), lightIntensityParams.y, mIntensityM);
 static const float LightIntensity2 = lerp(lerp(mLightIntensityMin, mLightIntensityMax, mMultiLightP), 0, mMultiLightM);
-static const float LightTemperature = lerp(lerp(lightTemperatureLimits.x, lightTemperatureLimits.z, mTemperatureP), lightTemperatureLimits.y, mTemperatureM);
 
 static const float3 LightPosition = mPosition;
 static const float3 LightDirection = normalize(mDirection - mPosition);
-static const float3 LightColor = float3(mHP, mSP, LightIntensity * LightIntensity2 * LightBlink);
+static const float3 LightColor = float3(mR, mG, mB) * LightIntensity * LightIntensity2 * LightBlink;
 
 static const float3 viewLightPosition = mul(float4(LightPosition, 1), matView).xyz;
+static const float3 viewLightDirection = normalize(mul(LightDirection, (float3x3)matView));
 
 #if SHADOW_MAP_FROM > 0
+#if SHADOW_MAP_QUALITY == 0
+#   define SHADOW_MAP_WIDTH 256
+#   define SHADOW_MAP_HEIGHT 512
+#elif SHADOW_MAP_QUALITY == 1
+#   define SHADOW_MAP_WIDTH 512
+#   define SHADOW_MAP_HEIGHT 1024
+#elif SHADOW_MAP_QUALITY == 2
+#   define SHADOW_MAP_WIDTH 1024
+#   define SHADOW_MAP_HEIGHT 2048
+#elif SHADOW_MAP_QUALITY >= 3
+#   define SHADOW_MAP_WIDTH 2048
+#   define SHADOW_MAP_HEIGHT 4096
+#else
+#   define SHADOW_MAP_WIDTH 256
+#   define SHADOW_MAP_HEIGHT 512
+#endif
+
 texture ShadowMap: OFFSCREENRENDERTARGET <
-	string Description = "Shadow Rendering for PointLight";
-	int2 Dimensions = {MULTI_SHADOW_MAP_SIZE * 2, MULTI_SHADOW_MAP_SIZE};
-	string Format = "R32F";
+	string Description = "Shadow Rendering for PointLightIES";
+	int2 Dimensions = {SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT};
+	string Format = "G32R32F";
 	float4 ClearColor = { 1, 1, 1, 1 };
-	float ClearDepth = 0.0;
+	float ClearDepth = 1.0;
 	string DefaultEffect = 
 		"self = hide;"
 		"*fog.pmx=hide;"
 		"*controller.pmx=hide;"
 		"*editor*.pmx=hide;"
-		"*.pmx = ../IES_shadow.fx;"
-		"*.pmd = ../IES_shadow.fx;"
+		"*.pmx = ../ies_shadow.fx;"
+		"*.pmd = ../ies_shadow.fx;"
 		"* = hide";
 >;
 sampler ShadowMapSamp = sampler_state {
@@ -69,85 +81,32 @@ sampler ShadowMapSamp = sampler_state {
 	AddressU = CLAMP; AddressV = CLAMP;
 };
 
-static float2 ShadowMapOffset  = 0.5 / float2(MULTI_SHADOW_MAP_SIZE * 2, MULTI_SHADOW_MAP_SIZE);
-static float2 ShadowMapOffset2 = 1.0 / float2(MULTI_SHADOW_MAP_SIZE * 2, MULTI_SHADOW_MAP_SIZE);
+static float2 ShadowmapOffset  = 0.5 / float2(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
+static float2 ShadowmapOffset2 = 1.0 / float2(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
 
-#if defined(MULTI_SHADOW_PCSS)
-float2 FindBlocker(sampler _ShadowTex, float2 uv, float depth, float2 searchRadius, float2 rotation)
+float ShadingShadow(MaterialParam material, float3 viewPosition)
 {
-    float blockerWeight = 0;
-    float blockerDepthSum = 0.0;
-
-    [loop]
-    for (int i = 0; i < MULTI_SHADOW_BLOCKER_COUNT; i++)
-    {
-		float sampleDepth = 1 - tex2Dlod(_ShadowTex, float4(uv + Rotate(MULTI_SHADOW_BLOCKER_POISSON[i], rotation) * searchRadius, 0, 0)).r;
-        if (sampleDepth < depth)
-        {
-            blockerDepthSum += sampleDepth;
-            blockerWeight++;
-        }
-    }
-
-    return float2(blockerDepthSum / max(1e-5, blockerWeight), blockerWeight);
-}
-#endif
-
-float ShadingShadow(float3 viewPosition, float2 radius, float random)
-{
-	float2 rotation = float2(cos(random * PI_2), sin(random * PI_2));
-
 	float3 P = mul(float4(viewPosition, 1), matViewInverse).xyz;
 	float3 L = P - LightPosition;
 
 	float linearDepth = length(L);
-	float receiverDepth = GetDeviceDepth(linearDepth, mPointLightNear, mPointLightFar);
-	receiverDepth -= 1e-4 * linearDepth;
+	float depth = (mPointLightFar - (mPointLightFar / linearDepth) * mPointLightNear) / (mPointLightFar - mPointLightNear);
 
-	float2 uv = CalcDualShadowCoord(L / linearDepth, MULTI_SHADOW_MAP_SIZE) + ShadowMapOffset;
-
-#if defined(MULTI_SHADOW_PCSS)
-	float2 searchRegionRadius = SearchRegionRadius(radius, linearDepth, mPointLightNear);
-	float2 blocker = FindBlocker(ShadowMapSamp, uv, receiverDepth, searchRegionRadius, rotation);
-
-	float2 penumbraRatio = PenumbraRadius(radius, receiverDepth, GetLinearDepth(blocker.x, mPointLightNear * 0.5, mPointLightFar));
-	float2 filterSize = ProjectToLight(penumbraRatio, receiverDepth, mPointLightNear);
-
-	[branch]
-	if (blocker.y <= 0)
-	{
-		return 1;
-	}
-#else
-	float2 filterSize = radius * 0.5;
-#endif
-
-	float shadow = 0;
+	float2 shadow = 0.0;
+	float2 coord = CalcDualShadowCoord(L / linearDepth, SHADOW_MAP_HEIGHT);
 
 	[unroll]
-	for (int i = 0; i < MULTI_SHADOW_POISSON_COUNT; i+=4)
+	for (int x = -sampleRadius; x <= sampleRadius; x++) 
 	{
-		float2 samplePoints[4];
-		samplePoints[0] = Rotate(MULTI_SHADOW_POISSON[i], rotation);
-		samplePoints[1] = Rotate(MULTI_SHADOW_POISSON[i+1], rotation);
-		samplePoints[2] = Rotate(MULTI_SHADOW_POISSON[i+2], rotation);
-		samplePoints[3] = Rotate(MULTI_SHADOW_POISSON[i+3], rotation);
-
-		float4 sampleDepth;
-		sampleDepth[0] = tex2Dlod(ShadowMapSamp, float4(uv + samplePoints[0] * filterSize, 0, 0)).r;
-		sampleDepth[1] = tex2Dlod(ShadowMapSamp, float4(uv + samplePoints[0] * filterSize, 0, 0)).r;
-		sampleDepth[2] = tex2Dlod(ShadowMapSamp, float4(uv + samplePoints[0] * filterSize, 0, 0)).r;
-		sampleDepth[3] = tex2Dlod(ShadowMapSamp, float4(uv + samplePoints[0] * filterSize, 0, 0)).r;
-
-		sampleDepth = 1 - sampleDepth;
-
-		shadow += receiverDepth < sampleDepth.x ? 1: 0;
-		shadow += receiverDepth < sampleDepth.y ? 1: 0;
-		shadow += receiverDepth < sampleDepth.z ? 1: 0;
-		shadow += receiverDepth < sampleDepth.w ? 1: 0;
+		[unroll]
+		for (int y = -sampleRadius; y <= sampleRadius; y++)
+		{
+			float2 pos = coord + float2(x, y) * ShadowmapOffset2;
+			shadow += tex2Dlod(ShadowMapSamp, float4(pos, 0, 0)).rg * sampleKernel[sampleRadius + x] * sampleKernel[sampleRadius + y];
+		}
 	}
 
-	return shadow / MULTI_SHADOW_POISSON_COUNT;
+	return ChebyshevUpperBound(shadow, depth, 1e-4, LightHardness);
 }
 #endif
 
@@ -159,23 +118,23 @@ sampler IESTextureSamp = sampler_state
 	AddressU  = CLAMP; AddressV = CLAMP;
 };
 
-float3 ComputeIESLightProfile1D(sampler source, float3 L, float3 Ld)
+float3 ComputeIESLightProfile1D(float3 L, float3 Ld)
 {
 	L = mul(L, (float3x3)matViewInverse);
 	float angle = (1 - acos(dot(L, Ld)) / PI);
-	return tex2Dlod(source, float4(angle, 0, 0, 0)).rgb;
+	return tex2Dlod(IESTextureSamp, float4(angle, 0, 0, 0)).rgb;
 }
 
-void ShadingMaterial(MaterialParam material, float3 P, float3 V, float3 lightColor, float shadow, inout float3 diffuse, inout float3 specular)
+void ShadingMaterial(MaterialParam material, float3 P, float3 V, float shadow, inout float3 diffuse, inout float3 specular)
 {
 	float3 L = viewLightPosition - P;
 	float3 L2 = normalize(L);
 
-	float3 atten = GetPhysicalLightAttenuation(L, LightRange, LightAttenuationBulb) * lightColor;
-	atten *= ComputeIESLightProfile1D(IESTextureSamp, L2, LightDirection);
+	float3 atten = GetPhysicalLightAttenuation(L, LightRange, LightAttenuationBulb);
+	atten *= ComputeIESLightProfile1D(L2, LightDirection) * LightColor;
 
 	float2x3 energy = SurfaceEnergy(material, material.normal, L2, V, shadow);
-	diffuse = energy[0];
+	diffuse = energy[0] + SubsurfaceShading(material, material.normal, L2, V);
 	diffuse *= atten;
 	
 #if LIGHT_PARAMS_TYPE == 0
@@ -211,7 +170,6 @@ void LightSourceVS(
 	in float2 Texcoord : TEXCOORD0,
 	out float4 oTexcoord0 : TEXCOORD0,
 	out float4 oTexcoord1 : TEXCOORD1,
-	out float3 oTexcoord2 : TEXCOORD2,
 	out float4 oPosition  : POSITION)
 {
 	Position.xyz = LightPosition + Normal * LightRange;
@@ -219,15 +177,11 @@ void LightSourceVS(
 	oTexcoord0 = oPosition = mul(Position, matViewProject);
 	oTexcoord0.xy = PosToCoord(oTexcoord0.xy / oTexcoord0.w) + ViewportOffset;
 	oTexcoord0.xy = oTexcoord0.xy * oTexcoord0.w;
-	oTexcoord2 = hsv2rgb(LightColor);
-	oTexcoord2 = ColorTemperature(oTexcoord2, LightTemperature);
 }
 
 void LightSourcePS(
-	in float4 texcoord : TEXCOORD0, 
-	in float3 viewdir : TEXCOORD1,
-	in float3 lightColor : TEXCOORD2,
-	in float2 screen : SV_POSITION,
+	float4 texcoord : TEXCOORD0, 
+	float3 viewdir : TEXCOORD1,
 	out float4 oColor0 : COLOR0,
 	out float4 oColor1 : COLOR1,
 	out float4 oColor2 : COLOR2)
@@ -243,15 +197,15 @@ void LightSourcePS(
 
 	float shadow = 1;
 #if SHADOW_MAP_FROM > 0
-	shadow = ShadingShadow(P2, LightRadius * float2(1.0, 0.5), PseudoRandom(screen));
+	shadow = ShadingShadow(materialAlpha, P2);
 	clip(shadow - 1e-5);
 #endif
 
 	float3 diffuse, specular = 0;
-	ShadingMaterial(material, P1, V, lightColor, shadow, diffuse, specular);
+	ShadingMaterial(material, P1, V, shadow, diffuse, specular);
 
 	float3 diffuseAlpha, specularAlpha = 0;
-	ShadingMaterial(materialAlpha, P2, V, lightColor, shadow, diffuseAlpha, specularAlpha);
+	ShadingMaterial(materialAlpha, P2, V, shadow, diffuseAlpha, specularAlpha);
 
 	oColor0 = float4(diffuse, 0);
 	oColor1 = float4(specular, 0);
@@ -261,7 +215,6 @@ void LightSourcePS(
 void LightSourceShadowlessPS(
 	float4 texcoord : TEXCOORD0, 
 	float3 viewdir : TEXCOORD1,
-	float3 lightColor : TEXCOORD2,
 	out float4 oColor0 : COLOR0,
 	out float4 oColor1 : COLOR1,
 	out float4 oColor2 : COLOR2)
@@ -276,10 +229,10 @@ void LightSourceShadowlessPS(
 	float3 P2 = V * materialAlpha.linearDepth / V.z;
 
 	float3 diffuse, specular = 0;
-	ShadingMaterial(material, P1, V, lightColor, 1, diffuse, specular);
+	ShadingMaterial(material, P1, V, 1, diffuse, specular);
 
 	float3 diffuseAlpha, specularAlpha = 0;
-	ShadingMaterial(materialAlpha, P2, V, lightColor, 1, diffuseAlpha, specularAlpha);
+	ShadingMaterial(materialAlpha, P2, V, 1, diffuseAlpha, specularAlpha);
 
 	oColor0 = float4(diffuse, 0);
 	oColor1 = float4(specular, 0);
