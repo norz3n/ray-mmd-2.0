@@ -1,10 +1,10 @@
 Ray-MMD
 ========
-###### [English](https://github.com/ray-cast/ray-mmd/blob/master/README.md) &nbsp; [中文文档](https://github.com/ray-cast/ray-mmd/blob/master/README_chs.md)  &nbsp; [Русский](https://github.com/ray-cast/ray-mmd/blob/master/README_ru.md)
+###### [English](https://github.com/ray-cast/ray-mmd-2.0/blob/master/README.md) &nbsp; [中文文档](https://github.com/ray-cast/ray-mmd-2.0/blob/master/README_chs.md)  &nbsp; [Русский](https://github.com/vellynproduction/ray-mmd-2.0/blob/master/README_ru.md)
 ### Физически-Основанный Рендер ###
 　　<img style="vertical-align: top;" src="./Shader/screenshots/logo.png" alt="logo" height="48px">
 
-　　Ray-MMD - это бесплатная, мощная библиотека и пакет расширений [mikumikudance](http://www.geocities.jp/higuchuu4/index_e.htm), предлагающий простой способ добавления Физически-Основанного Рендера с высокой свободой действий. она написана на языке hlsl с использованием DirectX 9 и базируется на [mikumikueffect](https://bowlroll.net/file/35012). 
+　　Ray-MMD - это бесплатная, мощная библиотека и пакет расширений [mikumikudance](http://www.geocities.jp/higuchuu4/index_e.htm), предлагающий простой способ добавления Физически-Основанного Рендера с высокой свободой действий. она написана на языке HLSL с использованием DirectX 9 и базируется на [mikumikueffect](https://bowlroll.net/file/35012). 
 
 Screenshots:
 ------------
