@@ -80,31 +80,14 @@ Resources :
 	- Notepad++ \[[link](https://notepad-plus-plus.org)\].
 	- Visual studio code \[[link](http://code.visualstudio.com/Download)\].
 
-Credits:
--------------
-Financially supported on [Patreon](http://www.patreon.com/cubizer):  
-
-#### Platinum supporters:
-* Penti_mmd
-* Robert Shawarden
-
-##### Gold supporters:
-* Sarashina - 更科
-* Birdway
-
-##### Bronze supporters:
-* urara在処
-* rin kari
-* MMD-Seraph
-* Rich El
-
-`Thanks! and other supporters! (If you would like to be added or remove from this list Please contact me)`
-
 Contact:
 ------------
 　　If you are a developer using this as part of your love and considering contacting me, you can submit code by `Pull requests` or Feel free to contact me via `twitter` and `issues`, i'll add your profile to team members, Thanks.
 
 * Reach me via Twitter: [@Rui](https://twitter.com/Rui_cg).
+
+   If you want to get in contact with this supervisor:
+* [DeviantArt](https://www.deviantart.com/vellyn-production)
 
 [License (MIT)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/LICENSE.txt)
 -------------------------------------------------------------------------------
