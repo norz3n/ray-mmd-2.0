@@ -70,26 +70,6 @@ Ray-MMD
 * FXAA抗锯齿 
 * SMAA抗锯齿 
 
-支持者:
--------------
-Financially supported on [Patreon](http://www.patreon.com/cubizer):  
-
-#### Platinum supporters:
-* Penti_mmd
-* Robert Shawarden
-
-##### Gold supporters:
-* Sarashina - 更科
-* Birdway
-
-##### Bronze supporters:
-* urara在処
-* rin kari
-* MMD-Seraph
-* Rich El
-
-`感谢所有对我的支持! (如果你想要在这里添加或者移除请通过下面的方式来联系我)`
-
 联系:
 ------------
 　　如果你是一名热爱图形的开发者，你可以通过`Pull requests`来提交你的代码，或者通过Github的Issue和twitter来加入到我们的团队
