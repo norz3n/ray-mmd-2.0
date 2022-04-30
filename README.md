@@ -91,7 +91,7 @@ Contact:
 
 [License (MIT)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/LICENSE.txt)
 -------------------------------------------------------------------------------
-	Copyright (C) 2016-2018 Ray-MMD Developers. All rights reserved.
+	Copyright (C) 2016-2022 Ray-MMD Developers. All rights reserved.
 
 	https://github.com/ray-cast/ray-mmd
 
