@@ -4,40 +4,9 @@ Ray-MMD
 ### Physically-Based Rendering ###
 　　<img style="vertical-align: top;" src="./Shader/screenshots/logo.png" alt="logo" height="48px">
 
-　　Ray-MMD is a free, powerful library and an extension pack of [mikumikudance](http://www.geocities.jp/higuchuu4/index_e.htm), offering an easy way of adding physically-based rendering with high-freedom of operation. it is written in hlsl lang with DX9 env and based on [mikumikueffect](https://bowlroll.net/file/35012). 
+　　Ray-MMD is a free, powerful library and an extension pack of [mikumikudance](https://sites.google.com/view/vpvp/), offering an easy way of adding physically-based rendering with high-freedom of operation. it is written in hlsl lang with DX9 env and based on [mikumikueffect](https://bowlroll.net/file/35012). 
 
-Screenshots:
-------------
-[![link text](./Shader/screenshots/screen1_small.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen1.jpg)
-[![link text](./Shader/screenshots/screen2_small.png)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen2.png)
-[![link text](./Shader/screenshots/screen3_small.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen3.png)
-[![link text](./Shader/screenshots/screen4_small.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen4.png)
-
-Download
-------------
-　[![img](https://img.shields.io/badge/version-1.3.1v2-brightgreen.svg)](https://github.com/ray-cast/ray-mmd/archive/1.3.1v2.zip)
-　[![img](https://img.shields.io/badge/version-1.5.0-brightgreen.svg)](https://github.com/ray-cast/ray-mmd/archive/1.5.0.zip)
-
-* [Ray-MMD - 1.3.1v2 (zip)](https://github.com/ray-cast/ray-mmd/archive/1.3.1v2.zip)  (updated: 27. Apr 2017)
-* [Ray-MMD - 1.3.1v2 (tar.gz)](https://github.com/ray-cast/ray-mmd/archive/1.3.1v2.tar.gz)  (updated: 27. Apr 2017)
-* [Ray-MMD - 1.5.0 (zip)](https://github.com/ray-cast/ray-mmd/archive/1.5.0.zip) (updated: 15. Jan 2018)
-* [Ray-MMD - 1.5.0 (tar.gz)](https://github.com/ray-cast/ray-mmd/archive/1.5.0.tar.gz) (updated: 15. Jan 2018)
-- Extension
-	- [ColorGrading - v1.0.0 (zip)](https://github.com/MikuMikuShaders/ColorGrading/archive/v1.0.0.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/ColorGrading)\])
-	- [FilmGrain - v1.0.0 (zip)](https://github.com/MikuMikuShaders/FilmGrain/archive/v1.0.0.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/FilmGrain)\])
-	- [FXAA - v1.0.0 (zip)](https://github.com/MikuMikuShaders/FXAA/archive/v1.0.0.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/FXAA)\])
-	- [LightBloom - v1.1.1 (zip)](https://github.com/MikuMikuShaders/LightBloom/archive/v1.1.1.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/LightBloom)\])
-	- [SMAA - v1.0.0 (zip)](https://github.com/MikuMikuShaders/SMAA/archive/v1.0.0.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/SMAA)\])
-	- [Spectrum - v1.4.0 (zip)](https://github.com/MikuMikuShaders/Spectrum/archive/v1.4.0.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/Spectrum)\])
-	- [StereoImage - v1.0.0 (zip)](https://github.com/MikuMikuShaders/StereoImage/archive/v1.0.0.zip) (updated: 2. Dec 2017, \[[Github](https://github.com/MikuMikuShaders/StereoImage)\])
-
-Requirement :
-------------
-* [MikuMikuDance](http://www.geocities.jp/higuchuu4/index_e.htm) - 926ver (x64) (Without Anti-Aliasing)
-* [MikuMikuEffect](https://bowlroll.net/file/35012) - 037ver (x64)
-* Direct3D 9 With Shader Model 3.0 (ps_3_0)
-
-Features :
+Features:
 ------------
 * Physically-Based Material: albedo, metallic, smoothness/roughness, specular/reflectance, emissive, etc
 * Clear coat material with absorption to simulate a second layer
@@ -49,8 +18,10 @@ Features :
 * Physical light units
 * Multiple light sources (Point, spot, sun, reactangle, disk, sphere, tube, ies)
 * IES light profiles (point and spot light support)
+* Reversed Depth
 * Soft shadow (PCF, VSM, PSSM)
-* Omni light shadow support based on dual-paraboloid project
+* Omni light shadow based on dual-paraboloid projection
+* Percentage Closer Soft Shadow
 * HDR linear lighting
 * Volumetric light (point, spot and ies light source support)
 * Volumetric fog (cube and sphere fog support)
@@ -59,10 +30,11 @@ Features :
 * Ground fog effect
 * Skybox based on RGBT encode
 * Image-based lighting based on RGBT encode
+* Screen Space Ambient Occlusition (HBAO)
 * Screen Space Reflection
-* Screen Space Ambient Occlusition
+* Screen Space Contact Shadow
 * Screen Space Subsurface Scattering
-* Post-Process Bokeh Depth Of Field
+* Post-Process Bokeh - Depth Of Field
 * Post-Process Bloom
 * Post-Process Eye adaptation
 * Post-Process Tone-mapping (ACES-like,Reinhard,Hable,Hejl2015,NaughtyDog support)
@@ -70,7 +42,31 @@ Features :
 * Post-Process FXAA
 * Post-Process SMAA
 
-Resources :
+Gallery:
+------------
+[![link text](./Shader/screenshots/screen1.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen1.jpg)
+[![link text](./Shader/screenshots/screen2.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen2.jpg)
+[![link text](./Shader/screenshots/screen3.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen3.jpg)
+[![link text](./Shader/screenshots/screen4.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen4.jpg)
+[![link text](./Shader/screenshots/screen5.jpg)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/Shader/screenshots/screen5.jpg)
+
+Download:
+------------
+　[![img](https://img.shields.io/badge/version-1.3.1v2-brightgreen.svg)](https://github.com/ray-cast/ray-mmd/archive/1.3.1v2.zip)
+　[![img](https://img.shields.io/badge/version-1.4.0beta3-brightgreen.svg)](https://github.com/ray-cast/ray-mmd/archive/140beta3.zip)
+
+* [Ray-MMD - 1.3.1v2 (zip)](https://github.com/ray-cast/ray-mmd/archive/1.3.1v2.zip)  (updated: 27. Apr 2017)
+* [Ray-MMD - 1.3.1v2 (tar.gz)](https://github.com/ray-cast/ray-mmd/archive/1.3.1v2.tar.gz)  (updated: 27. Apr 2017)
+* [Ray-MMD - 1.4.0beta v2 (zip)](https://github.com/ray-cast/ray-mmd/archive/140beta2.zip) (updated: 30. Jul 2017)
+* [Ray-MMD - 1.4.0beta v2 (tar.gz)](https://github.com/ray-cast/ray-mmd/archive/140beta2.tar.gz) (updated: 30. Jul 2017)
+
+Requirement:
+------------
+* [MikuMikuDance](https://sites.google.com/view/vpvp/) - 926ver (x64) (Without Anti-Aliasing)
+* [MikuMikuEffect](https://bowlroll.net/file/35012) - 037ver (x64)
+* Direct3D 9 With Shader Model 3.0 (ps_3_0)
+
+Resources:
 ------------
 - HDRi
 	- sIBL Archive - Hdrlabs.com \[[link](http://www.hdrlabs.com/sibl/archive.html)\].
@@ -86,8 +82,7 @@ Contact:
 
 * Reach me via Twitter: [@Rui](https://twitter.com/Rui_cg).
 
-   If you want to get in contact with this supervisor:
-* [DeviantArt](https://www.deviantart.com/vellyn-production)
+   If you want to get in contact with this maintainer: [DeviantArt - vellyn-production](https://www.deviantart.com/vellyn-production)
 
 [License (MIT)](https://raw.githubusercontent.com/ray-cast/ray-mmd/master/LICENSE.txt)
 -------------------------------------------------------------------------------
@@ -112,7 +107,7 @@ Contact:
 	AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-References :
+References:
 --------
 * Moving to the Next Generation - The Rendering Technology of Ryse \[[link](http://www.crytek.com/download/2014_03_25_CRYENGINE_GDC_Schultz.pdf)\].
 * ACES Filmic Tone Mapping Curve \[[link](https://knarkowicz.wordpress.com/2016/08/31/hdr-display-first-steps/)\].
@@ -141,3 +136,6 @@ References :
 * Approximation of the IBL’s DFG term for a cloth BRDF \[[link](https://gist.github.com/romainguy/52d0e7f070d9ed7b44a0327d735fe33e)\]
 * Real-Time Polygonal-Light Shading with Linearly Transformed Cosines\[[link](https://eheitzresearch.wordpress.com/415-2/)\]
 * Limb Darkening model \[[link](http://www.physics.hmc.edu/faculty/esin/a101/limbdarkening.pdf)\]
+* Percentage-Closer Soft Shadows \[[link](http://developer.download.nvidia.com/shaderlibrary/docs/shadow_PCSS.pdf)\]
+* Creating a Spherical Reflection/Environment Mapping shader \[[link](https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/)\]
+* Geometric Specular Aliasing \[[link](http://media.steampowered.com/apps/valve/2015/Alex_Vlachos_Advanced_VR_Rendering_GDC2015.pdf)\]
