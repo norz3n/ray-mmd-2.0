@@ -1,6 +1,6 @@
 #define CONTACT_SHADOW_SAMPLES 6
 
-float4 ScreenSapceContactShadowFragment(in float4 uv : TEXCOORD0) : COLOR
+float4 ScreenSpaceContactShadowFragment(in float4 uv : TEXCOORD0) : COLOR
 {
 	MaterialParam material = SampleTransparentGbuffer(uv.xy);
 	clip(any(material.visibility) - 1e-5);

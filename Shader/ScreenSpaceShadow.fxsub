@@ -69,7 +69,7 @@ float ShadowPCF(sampler _ShadowTex, float2 uv, float radius, float linearDepth, 
 	return shadow / CASCADE_SHADOW_POISSON_COUNT;
 }
 
-float4 ScreenSapceShadowMapFragment(
+float4 ScreenSpaceShadowMapFragment(
 	in float4 uv : TEXCOORD0,
 	in float3 viewdir : TEXCOORD1) : COLOR
 {
@@ -132,7 +132,7 @@ float4 ScreenSapceShadowMapFragment(
 	return shadow;
 }
 
-float4 ScreenSapceShadowMapBilateralFilterPS(float2 coord : TEXCOORD0, uniform sampler source, uniform float2 offset) : COLOR
+float4 ScreenSpaceShadowMapBilateralFilterPS(float2 coord : TEXCOORD0, uniform sampler source, uniform float2 offset) : COLOR
 {
 	float2 offset1 = coord + offset;
 	float2 offset2 = coord - offset;

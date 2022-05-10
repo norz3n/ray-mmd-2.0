@@ -226,10 +226,10 @@ technique DeferredLighting<
 	"RenderColorTarget=_CameraShadowTexture;"
 	"ClearSetColor=WhiteColor;"
 	"Clear=Color;"
-	"Pass=ScreenSapceShadowMap;"
+	"Pass=ScreenSpaceShadowMap;"
 	"ClearSetColor=BackColor;"
 #if SUN_CONTACT_SHADOW_QUALITY
-	"Pass=ScreenSapceContactShadow;"
+	"Pass=ScreenSpaceContactShadow;"
 #endif
 #if CASCADE_SHADOW_BLUR_COUNT
 	"RenderColorTarget=_CameraShadowTextureTemp;	Clear=Color; Pass=ScreenSpaceShadowBilateralFilterX;"
@@ -421,31 +421,31 @@ technique DeferredLighting<
 ;>
 {
 #if SUN_LIGHT_ENABLE && SUN_SHADOW_MAP_QUALITY
-	pass ScreenSapceShadowMap<string Script= "Draw=Buffer;";>{
+	pass ScreenSpaceShadowMap<string Script= "Draw=Buffer;";>{
 		AlphaBlendEnable = false; AlphaTestEnable = false;
 		ZEnable = false; ZWriteEnable = false;
 		VertexShader = compile vs_3_0 ScreenSpaceQuadVS();
-		PixelShader  = compile ps_3_0 ScreenSapceShadowMapFragment();
+		PixelShader  = compile ps_3_0 ScreenSpaceShadowMapFragment();
 	}
 	pass ScreenSpaceShadowBilateralFilterX<string Script= "Draw=Buffer;";>{
 		AlphaBlendEnable = false; AlphaTestEnable = false;
 		ZEnable = false; ZWriteEnable = false;
 		VertexShader = compile vs_3_0 ScreenSpaceQuadVS();
-		PixelShader  = compile ps_3_0 ScreenSapceShadowMapBilateralFilterPS(_CameraShadowTexture_PointSampler, float2(_CameraShadowTexture_TexelSize.x, 0.0f));
+		PixelShader  = compile ps_3_0 ScreenSpaceShadowMapBilateralFilterPS(_CameraShadowTexture_PointSampler, float2(_CameraShadowTexture_TexelSize.x, 0.0f));
 	}
 	pass ScreenSpaceShadowBilateralFilterY<string Script= "Draw=Buffer;";>{
 		AlphaBlendEnable = false; AlphaTestEnable = false;
 		ZEnable = false; ZWriteEnable = false;
 		VertexShader = compile vs_3_0 ScreenSpaceQuadVS();
-		PixelShader  = compile ps_3_0 ScreenSapceShadowMapBilateralFilterPS(_CameraShadowTextureTemp_PointSampler, float2(0.0f, _CameraShadowTexture_TexelSize.y));
+		PixelShader  = compile ps_3_0 ScreenSpaceShadowMapBilateralFilterPS(_CameraShadowTextureTemp_PointSampler, float2(0.0f, _CameraShadowTexture_TexelSize.y));
 	}
 #if SUN_CONTACT_SHADOW_QUALITY
-	pass ScreenSapceContactShadow<string Script= "Draw=Buffer;";>{
+	pass ScreenSpaceContactShadow<string Script= "Draw=Buffer;";>{
 		AlphaBlendEnable = true; AlphaTestEnable = false;
 		ZEnable = false; ZWriteEnable = false;
 		SrcBlend = DESTCOLOR; DestBlend = ZERO;
 		VertexShader = compile vs_3_0 ScreenSpaceQuadVS();
-		PixelShader  = compile ps_3_0 ScreenSapceContactShadowFragment();
+		PixelShader  = compile ps_3_0 ScreenSpaceContactShadowFragment();
 	}
 #endif
 #endif
